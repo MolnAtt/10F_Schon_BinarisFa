@@ -36,32 +36,33 @@ namespace BinaryTree
                 {
                     if (szulo.szulo == szulo) // ez a gyökér-e vagy sem
                     {
-                        this.szulo.jobb = this;
+                        szulo.jobb = this;
                         // szulo.bal = this; // ez szerintem kell.
                     }
                     else if (rel(szulo.ertek, ertek) == -1) // jobbra vagy balra
-                        this.szulo.jobb = this;
+                        szulo.jobb = this;
                     else
-                        this.szulo.bal = this; // itt most kihasználtuk, hogy ezt csak olyna helyen hívjuk meg, ahol az egyenlőséggel már foglalkoztunk.
+                        szulo.bal = this; // itt most kihasználtuk, hogy ezt csak olyna helyen hívjuk meg, ahol az egyenlőséggel már foglalkoztunk.
                     this.ertek = ertek;
                     this.szulo = szulo;
                 }
-
                 public override string ToString()
                 {
                     string sum = "";
                     if (BalraVanValaki())
                     {
-                        sum += $"{this.ertek} -> {this.bal.ertek};\n";
-                        sum += this.bal.ToString()+ "\n";
+                        sum += $"{this.ertek} -> {this.bal.ertek} [ label=\"bal\" ];\n";
+                        sum += this.bal.ToString();
                     }
                     if (JobbraVanValaki())
                     {
-                        sum += $"{this.ertek} -> {this.jobb.ertek};\n";
-                        sum += this.jobb.ToString() + "\n";
+                        sum += $"{this.ertek} -> {this.jobb.ertek} [ label=\"jobb\" ];\n";
+                        sum += this.jobb.ToString();
                     }
                     return sum;
                 }
+                /*
+                */
 
                 bool JobbraVanValaki() => this.jobb != null;
                 bool BalraVanValaki() => this.bal != null;
@@ -132,6 +133,7 @@ namespace BinaryTree
 
             public override string ToString()
             {
+                Console.Error.WriteLine("-------------------------");
                 if (Ures())
                     return "";
                 return fejelem.jobb.ToString();
