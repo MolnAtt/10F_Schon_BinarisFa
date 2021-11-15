@@ -46,6 +46,35 @@ namespace BinaryTree
                     this.ertek = ertek;
                     this.szulo = szulo;
                 }
+
+                public int Height()
+                {
+                    if (Level())
+                        return 1;
+                    if (JobbraVanValaki() && BalraVanValaki())
+                        return Math.Max(jobb.Height(), bal.Height())+1;
+                    if (JobbraVanValaki())
+                        return jobb.Height() + 1;
+                    if (BalraVanValaki())
+                        return bal.Height() + 1;
+                    return -1;
+                }
+
+                public List<T> Where(Func<T, bool> predicate)
+                {
+                    
+                    if (Level())
+                    {
+                        List<T> result = new List<T>();
+                        if (predicate(ertek))
+                        {
+                            result.Add(ertek);
+                        }
+                        return result;
+                    }
+
+
+                }
                 public override string ToString()
                 {
                     string sum = "";
@@ -106,11 +135,21 @@ namespace BinaryTree
                 return 0 == relacio(Gyoker.Helye_rek(ertek, relacio).ertek, ertek);
             }
 
-            private Elem<T> Keres(T ertek)
+            public int Height()
             {
-                return null;
+                if (Ures())
+                    return 0;
+                return fejelem.jobb.Height();
             }
 
+            public List<T> Where(Func<T, bool> predicate)
+            {
+                if (Ures())
+                {
+                    return new List<T>();
+                }
+                return fejelem.jobb.Where(predicate);
+            }
 
 
 
@@ -136,33 +175,26 @@ namespace BinaryTree
                 Console.Error.WriteLine("-------------------------");
                 if (Ures())
                     return "";
-                return fejelem.jobb.ToString();
+                // return fejelem.jobb.ToString();
+                return "";
             }
         }
         static void Main(string[] args)
         {
             KeresoFa<int> halmaz = new KeresoFa<int>((x,y)=>x.CompareTo(y));
-            Console.WriteLine(halmaz);
             halmaz.Add(10);
-            Console.WriteLine(halmaz);
             halmaz.Add(5);
-            Console.WriteLine(halmaz);
             halmaz.Add(20);
-            Console.WriteLine(halmaz);
             halmaz.Add(7);
-            Console.WriteLine(halmaz);
             halmaz.Add(6);
-            Console.WriteLine(halmaz);
             halmaz.Add(17);
-            Console.WriteLine(halmaz);
             halmaz.Add(30);
-            Console.WriteLine(halmaz);
             halmaz.Add(15);
-            Console.WriteLine(halmaz);
             halmaz.Add(14);
-            Console.WriteLine(halmaz);
             halmaz.Add(16);
             Console.WriteLine(halmaz);
+
+            Console.WriteLine(halmaz.Height());
         }
     }
 }
