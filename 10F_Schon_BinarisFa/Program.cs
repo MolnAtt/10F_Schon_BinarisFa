@@ -93,9 +93,9 @@ namespace BinaryTree
                 /*
                 */
 
-                bool JobbraVanValaki() => this.jobb != null;
-                bool BalraVanValaki() => this.bal != null;
-                bool Level() => !(JobbraVanValaki() || BalraVanValaki());
+                public bool JobbraVanValaki() => this.jobb != null;
+                public bool BalraVanValaki() => this.bal != null;
+                public bool Level() => !(JobbraVanValaki() || BalraVanValaki());
 
                 public Elem<T> Helye_rek(T ertek, Func<T, T, int> rel)
                 {
@@ -151,7 +151,36 @@ namespace BinaryTree
                 return fejelem.jobb.Where(predicate);
             }
 
+            public void Remove(T ertek)
+            {
+                if (Ures())
+                {
+                    Console.Error.WriteLine("Ez nem fog menni, mert üres");
+                    throw new Exception("ejnye");
+                }
+                Elem<T> kiveendő = Helye_rek(ertek);
+                if(relacio(kiveendő.ertek,ertek)!=0)
+                {
+                    Console.Error.WriteLine("Ez nem fog menni, mert nincs benne ilyen");
+                }
+                else
+                {
+                    if (kiveendő.Level())
+                    {
+                        if (kiveendő.szulo.jobb == kiveendő)
+                            kiveendő.szulo.jobb = null;
+                        else
+                            kiveendő.szulo.bal = null;
+                    }
+                    else if (kiveendő.BalraVanValaki() && kiveendő.JobbraVanValaki())
+                    { }
+                    else if (kiveendő.BalraVanValaki())
+                    { }
+                    else if (kiveendő.JobbraVanValaki())
+                    { }
+                }
 
+            }
 
             public void Add(T ertek)
             {
