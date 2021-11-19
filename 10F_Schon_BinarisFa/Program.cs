@@ -59,7 +59,7 @@ namespace BinaryTree
                         return bal.Height() + 1;
                     return -1;
                 }
-
+                /*
                 public List<T> Where(Func<T, bool> predicate)
                 {
                     
@@ -72,9 +72,8 @@ namespace BinaryTree
                         }
                         return result;
                     }
-
-
                 }
+                */
                 public override string ToString()
                 {
                     string sum = "";
@@ -142,6 +141,7 @@ namespace BinaryTree
                 return fejelem.jobb.Height();
             }
 
+            /*
             public List<T> Where(Func<T, bool> predicate)
             {
                 if (Ures())
@@ -150,6 +150,7 @@ namespace BinaryTree
                 }
                 return fejelem.jobb.Where(predicate);
             }
+            */
 
             public void Remove(T ertek)
             {
@@ -173,11 +174,56 @@ namespace BinaryTree
                             kiveendő.szulo.bal = null;
                     }
                     else if (kiveendő.BalraVanValaki() && kiveendő.JobbraVanValaki())
-                    { }
+                    {
+                        // keressük a jobboldali gyerek legbaloldalibb elemét.
+                        // mert a nála nagyobbak közül keressük a legkisebbet a helyére.
+
+                        Elem<T> aktelem = kiveendő.jobb;
+                        if (kiveendő.jobb.BalraVanValaki())
+                        {
+                            while (!aktelem.bal.Equals(null))
+                            {
+                                aktelem = aktelem.bal;
+                            }
+                            kiveendő.ertek = aktelem.ertek;
+                            if (aktelem.jobb.Equals(null))
+                            {
+                                //ha nincs
+                                aktelem.szulo.bal = null;
+                            }
+                            else
+                            {
+                                aktelem.szulo.bal = aktelem.jobb;
+                            }
+                        }
+                        else
+                        {
+                            if (kiveendő.jobb.JobbraVanValaki())
+                            {
+                                kiveendő.jobb.bal = kiveendő.bal;
+                                // kiveendő.jobb.jobb.szulo = kiveendő.jobb;
+                                kiveendő.jobb = kiveendő.jobb.jobb;
+                            }
+                            else
+                                kiveendő.szulo.bal = kiveendő.jobb;
+
+                        }
+
+                    }
                     else if (kiveendő.BalraVanValaki())
-                    { }
+                    {
+                        if (kiveendő.szulo.jobb == kiveendő)
+                            kiveendő.szulo.jobb = kiveendő.bal;
+                        else
+                            kiveendő.szulo.bal = kiveendő.bal;
+                    }
                     else if (kiveendő.JobbraVanValaki())
-                    { }
+                    {
+                        if (kiveendő.szulo.jobb == kiveendő)
+                            kiveendő.szulo.jobb = kiveendő.jobb;
+                        else
+                            kiveendő.szulo.bal = kiveendő.jobb;
+                    }
                 }
 
             }
@@ -211,19 +257,17 @@ namespace BinaryTree
         static void Main(string[] args)
         {
             KeresoFa<int> halmaz = new KeresoFa<int>((x,y)=>x.CompareTo(y));
-            halmaz.Add(10);
             halmaz.Add(5);
-            halmaz.Add(20);
+            halmaz.Add(9);
+            halmaz.Add(1);
+            halmaz.Add(2);
             halmaz.Add(7);
-            halmaz.Add(6);
-            halmaz.Add(17);
-            halmaz.Add(30);
-            halmaz.Add(15);
-            halmaz.Add(14);
-            halmaz.Add(16);
+            halmaz.Add(11);
+            halmaz.Add(12);
+            halmaz.Add(10);
             Console.WriteLine(halmaz);
-
-            Console.WriteLine(halmaz.Height());
+            halmaz.Remove(9);
+            Console.WriteLine(halmaz);
         }
     }
 }
