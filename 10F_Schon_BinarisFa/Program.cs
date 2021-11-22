@@ -47,6 +47,7 @@ namespace BinaryTree
                     this.szulo = szulo;
                 }
 
+
                 public int Height()
                 {
                     if (Level())
@@ -89,6 +90,17 @@ namespace BinaryTree
                     }
                     return sum;
                 }
+
+                public string LocalToString()
+                {
+                    if (JobbraVanValaki() && BalraVanValaki())
+                        return $"({szulo.ertek}) --> ({ertek}) --> ({bal.ertek};{jobb.ertek})";
+                    if (BalraVanValaki())
+                        return $"({szulo.ertek}) --> ({ertek}) --> ({bal.ertek};-)";
+                    if (JobbraVanValaki())
+                        return $"({szulo.ertek}) --> ({ertek}) --> (-;{jobb.ertek})";
+                    return $"({szulo.ertek}) --> ({ertek})";
+                }
                 /*
                 */
 
@@ -111,6 +123,43 @@ namespace BinaryTree
                     }
                     return this;
                 }
+
+                /// <summary>
+                /// Csak akkor használható, ha legfeljebb egy gyereke van!
+                /// </summary>
+                public void AutoKikotes()
+                {
+                    /*
+                    Elem<T> mit = JobbGyerek() ? this.szulo.jobb : this.szulo.bal;
+                    Elem<T> mire = JobbraVanValaki() ? this.jobb : this.bal;
+                    mit = mire;
+                    */
+
+                    if (JobbGyerek())
+                    {
+                        if (JobbraVanValaki())
+                            this.szulo.jobb = this.jobb;
+                        else
+                            this.szulo.jobb = this.bal;
+                    }
+                    else
+                    {
+                        if (JobbraVanValaki())
+                            this.szulo.bal = this.jobb;
+                        else
+                            this.szulo.bal = this.bal;
+                    }
+                }
+
+                public void Értékcsere(Elem<T> mivel) => (this.ertek, mivel.ertek) = (mivel.ertek, this.ertek);
+                public Elem<T> Next()
+                {
+                    Elem<T> aktelem = this.jobb;
+                    while (aktelem.BalraVanValaki())
+                        aktelem = aktelem.bal;
+                    return aktelem;
+                }
+                public bool JobbGyerek() => this.szulo.jobb == this;
 
             }
 
@@ -152,6 +201,8 @@ namespace BinaryTree
             }
             */
 
+
+
             public void Remove(T ertek)
             {
                 if (Ures())
@@ -159,73 +210,22 @@ namespace BinaryTree
                     Console.Error.WriteLine("Ez nem fog menni, mert üres");
                     throw new Exception("ejnye");
                 }
+
                 Elem<T> kiveendő = Helye_rek(ertek);
-                if(relacio(kiveendő.ertek,ertek)!=0)
+                if (relacio(kiveendő.ertek, ertek) != 0)
                 {
                     Console.Error.WriteLine("Ez nem fog menni, mert nincs benne ilyen");
+                    return;
+                }
+
+                if (kiveendő.BalraVanValaki() && kiveendő.JobbraVanValaki())
+                {
+                    Elem<T> n = kiveendő.Next();
+                    kiveendő.Értékcsere(n);
+                    n.AutoKikotes();
                 }
                 else
-                {
-                    if (kiveendő.Level())
-                    {
-                        if (kiveendő.szulo.jobb == kiveendő)
-                            kiveendő.szulo.jobb = null;
-                        else
-                            kiveendő.szulo.bal = null;
-                    }
-                    else if (kiveendő.BalraVanValaki() && kiveendő.JobbraVanValaki())
-                    {
-                        // keressük a jobboldali gyerek legbaloldalibb elemét.
-                        // mert a nála nagyobbak közül keressük a legkisebbet a helyére.
-
-                        Elem<T> aktelem = kiveendő.jobb;
-                        if (kiveendő.jobb.BalraVanValaki())
-                        {
-                            while (!aktelem.bal.Equals(null))
-                            {
-                                aktelem = aktelem.bal;
-                            }
-                            kiveendő.ertek = aktelem.ertek;
-                            if (aktelem.jobb.Equals(null))
-                            {
-                                //ha nincs
-                                aktelem.szulo.bal = null;
-                            }
-                            else
-                            {
-                                aktelem.szulo.bal = aktelem.jobb;
-                            }
-                        }
-                        else
-                        {
-                            if (kiveendő.jobb.JobbraVanValaki())
-                            {
-                                kiveendő.jobb.bal = kiveendő.bal;
-                                // kiveendő.jobb.jobb.szulo = kiveendő.jobb;
-                                kiveendő.jobb = kiveendő.jobb.jobb;
-                            }
-                            else
-                                kiveendő.szulo.bal = kiveendő.jobb;
-
-                        }
-
-                    }
-                    else if (kiveendő.BalraVanValaki())
-                    {
-                        if (kiveendő.szulo.jobb == kiveendő)
-                            kiveendő.szulo.jobb = kiveendő.bal;
-                        else
-                            kiveendő.szulo.bal = kiveendő.bal;
-                    }
-                    else if (kiveendő.JobbraVanValaki())
-                    {
-                        if (kiveendő.szulo.jobb == kiveendő)
-                            kiveendő.szulo.jobb = kiveendő.jobb;
-                        else
-                            kiveendő.szulo.bal = kiveendő.jobb;
-                    }
-                }
-
+                    kiveendő.AutoKikotes();
             }
 
             public void Add(T ertek)
@@ -250,8 +250,10 @@ namespace BinaryTree
                 Console.Error.WriteLine("-------------------------");
                 if (Ures())
                     return "";
-                // return fejelem.jobb.ToString();
+                return fejelem.jobb.ToString();
+                /*
                 return "";
+                */
             }
         }
         static void Main(string[] args)
@@ -268,6 +270,9 @@ namespace BinaryTree
             Console.WriteLine(halmaz);
             halmaz.Remove(9);
             Console.WriteLine(halmaz);
+            /*
+            */
+            Console.ReadKey();
         }
     }
 }
